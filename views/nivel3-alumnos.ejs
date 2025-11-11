@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alumnos - <%= nombreCarrera %></title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <%- include('partials/header') %>
+    <main class="dashboard-main">
+        <a href="/facultad/<%= facultadId %>" class="btn-back">← Volver a <%= nombreFacultad %></a>
+        
+        <h1>👥 Alumnos de <%= nombreCarrera %></h1>
+        
+        <div class="stats-summary">
+            <div class="stat-card">
+                <p class="stat-label">Total de Alumnos</p>
+                <h2 class="stat-value"><%= totalAlumnos %></h2>
+            </div>
+            <div class="stat-card">
+                <p class="stat-label">Promedio de la Carrera</p>
+                <h2 class="stat-value"><%= promedioCarrera %></h2>
+            </div>
+        </div>
+        
+        <div class="alumnos-container">
+            <h2>Lista de Alumnos</h2>
+            <p style="color: #666; margin-bottom: 20px;">Haz clic en un alumno para ver sus estadísticas detalladas</p>
+            
+            <div class="alumnos-grid">
+                <% alumnos.forEach(function(alumno) { %>
+                    <div class="alumno-card" onclick="window.location.href='/alumno/<%= alumno.id %>'">
+                        <div class="alumno-header">
+                            <h3><%= alumno.nombre %></h3>
+                            <span class="legajo-badge">Legajo: <%= alumno.legajo %></span>
+                        </div>
+                        <div class="alumno-stats">
+                            <div class="stat-item">
+                                <span class="stat-icon">📊</span>
+                                <div>
+                                    <p class="stat-label-small">Promedio</p>
+                                    <p class="stat-value-small <%= alumno.promedio >= 7 ? 'green' : alumno.promedio >= 6 ? 'yellow' : 'red' %>">
+                                        <%= alumno.promedio %>
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-icon">📚</span>
+                                <div>
+                                    <p class="stat-label-small">Materias</p>
+                                    <p class="stat-value-small"><%= alumno.totalMaterias %></p>
+                                </div>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-icon">✅</span>
+                                <div>
+                                    <p class="stat-label-small">Aprobadas</p>
+                                    <p class="stat-value-small"><%= alumno.materiasAprobadas %></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar" style="width: <%= (alumno.materiasAprobadas / alumno.totalMaterias * 100).toFixed(0) %>%"></div>
+                        </div>
+                        <p class="progress-text"><%= (alumno.materiasAprobadas / alumno.totalMaterias * 100).toFixed(0) %>% de materias aprobadas</p>
+                    </div>
+                <% }); %>
+            </div>
+            
+            <% if (alumnos.length === 0) { %>
+                <p style="text-align: center; color: #666; padding: 40px;">No hay alumnos registrados en esta carrera.</p>
+            <% } %>
+        </div>
+    </main>
+    <%- include('partials/footer') %>
+</body>
+</html>

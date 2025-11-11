@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Facultades</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <%- include('partials/header') %>
+    <main class="dashboard-main">
+        <h1>📊 Rendimiento por Facultad</h1>
+        <p style="color: #666; margin-bottom: 20px;">Haz clic en una columna para ver las carreras de esa facultad</p>
+        
+        <div class="dashboard-layout">
+            <div class="chart-section">
+                <canvas id="myChart"></canvas>
+            </div>
+            
+            <div class="sidebar-section">
+                <div class="total-alumnos-card">
+                    <p class="card-label">Total de Alumnos:</p>
+                    <h2 class="card-number"><%= totalAlumnos.toLocaleString() %></h2>
+                </div>
+                
+                <div class="indicator-card">
+                    <div class="indicator-chart-container">
+                        <canvas id="indicatorChart"></canvas>
+                    </div>
+                    <p class="indicator-label">Indicador Global</p>
+                    <h3 class="indicator-percentage"><%= tasaAprobacionPorcentaje %>%</h3>
+                    <p class="indicator-subtitle">Tasa de Aprobación</p>
+                    <div class="legend">
+                        <div class="legend-item"><span class="color-box verde"></span> > 75%</div>
+                        <div class="legend-item"><span class="color-box amarillo"></span> 50-75%</div>
+                        <div class="legend-item"><span class="color-box rojo"></span> < 50%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <%- include('partials/footer') %>
+
+    <script>
+        const datosGraficoJSON = <%- JSON.stringify(datosParaGrafico) %>;
+        const tasaAprobacion = <%= tasaAprobacionPorcentaje %>;
+        const tasaColor = '<%= tasaAprobacionColor %>';
+    </script>
+    <script src="/js/dashboard-charts.js"></script>
+</body>
+</html>

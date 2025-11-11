@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil de <%= alumno.nombre_completo %></title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <%- include('partials/header') %>
+    <main class="dashboard-main">
+        <a href="javascript:history.back()" class="btn-back">← Volver</a>
+        
+        <div class="alumno-perfil-header">
+            <div class="perfil-info">
+                <h1>👤 <%= alumno.nombre_completo %></h1>
+                <div class="perfil-details">
+                    <span class="detail-item"><strong>Legajo:</strong> <%= alumno.legajo %></span>
+                    <span class="detail-item"><strong>DNI:</strong> <%= alumno.dni %></span>
+                    <span class="detail-item"><strong>Email:</strong> <%= alumno.email %></span>
+                    <span class="detail-item"><strong>Teléfono:</strong> <%= alumno.telefono %></span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="stats-summary">
+            <div class="stat-card">
+                <p class="stat-label">Promedio General</p>
+                <h2 class="stat-value <%= promedio >= 7 ? 'green' : promedio >= 6 ? 'yellow' : 'red' %>"><%= promedio %></h2>
+            </div>
+            <div class="stat-card">
+                <p class="stat-label">Total Materias</p>
+                <h2 class="stat-value"><%= totalMaterias %></h2>
+            </div>
+            <div class="stat-card">
+                <p class="stat-label">Materias Aprobadas</p>
+                <h2 class="stat-value green"><%= materiasAprobadas %></h2>
+            </div>
+            <div class="stat-card">
+                <p class="stat-label">Tasa de Aprobación</p>
+                <h2 class="stat-value <%= tasaAprobacion >= 75 ? 'green' : tasaAprobacion >= 50 ? 'yellow' : 'red' %>"><%= tasaAprobacion %>%</h2>
+            </div>
+        </div>
+        
+        <div class="chart-container-alumno">
+            <h2>Historial de Notas</h2>
+            <canvas id="notasChart"></canvas>
+        </div>
+        
+        <div class="inscripciones-table-container">
+            <h2>Detalle de Inscripciones</h2>
+            <table class="inscripciones-table">
+                <thead>
+                    <tr>
+                        <th>Materia</th>
+                        <th>Carrera</th>
+                        <th>Fecha Cursado</th>
+                        <th>Nota Final</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% inscripciones.forEach(function(insc) { %>
+                        <tr>
+                            <td><%= insc.nombre_materia %></td>
+                            <td><%= insc.nombre_carrera %></td>
+                            <td><%= new Date(insc.fecha_cursado).toLocaleDateString('es-AR') %></td>
+                            <td>
+                                <% if (insc.nota_final !== null) { %>
+                                    <span class="nota-badge <%= insc.nota_final >= 7 ? 'green' : insc.nota_final >= 6 ? 'yellow' : 'red' %>">
+                                        <%= insc.nota_final %>
+                                    </span>
+                                <% } else { %>
+                                    <span class="nota-badge gray">-</span>
+                                <% } %>
+                            </td>
+                            <td>
+                                <span class="estado-badge <%= insc.estado %>"><%= insc.estado %></span>
+                            </td>
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+            
+            <% if (inscripciones.length === 0) { %>
+                <p style="text-align: center; color: #666; padding: 40px;">No hay inscripciones registradas.</p>
+            <% } %>
+        </div>
+    </main>
+    <%- include('partials/footer') %>
+    
+    <script>
+        // Gráfico de notas del alumno
+        const inscripciones = <%- JSON.stringify(inscripciones) %>;
+        const notasValidas = inscripciones.filter(i => i.nota_final !== null);
+        
+        if (notasValidas.length > 0) {
+            const ctx = document.getElementById('notasChart').getContext('2d');
+            const labels = notasValidas.map(i => i.nombre_materia);
+            const notas = notasValidas.map(i => parseFloat(i.nota_final));
+            
+            const backgroundColors = notas.map(nota => {
+                if (nota >= 7) return '#4CAF50';
+                if (nota >= 6) return '#FFC107';
+                return '#F44336';
+            });
+            
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Nota Final',
+                        data: notas,
+                        backgroundColor: backgroundColors,
+                        borderColor: backgroundColors,
+                        borderWidth: 2,
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 10,
+                            ticks: { stepSize: 1, font: { size: 14 } },
+                            grid: { color: 'rgba(0, 0, 0, 0.05)' }
+                        },
+                        x: {
+                            ticks: { 
+                                font: { size: 11 },
+                                maxRotation: 45,
+                                minRotation: 45
+                            },
+                            grid: { display: false }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return 'Nota: ' + context.parsed.y.toFixed(1);
+                                }
+                            },
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            padding: 12,
+                            titleFont: { size: 14 },
+                            bodyFont: { size: 13 }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>

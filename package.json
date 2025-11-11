@@ -1,0 +1,19 @@
+{
+  "name": "rendimiento-academico-dashboard",
+  "version": "1.0.0",
+  "description": "Dashboard de Rendimiento Académico (Monolito Node.js)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.9",
+    "express": "^4.18.2",
+    "express-session": "^1.18.0",
+    "pg": "^8.16.3"
+  }
+}
