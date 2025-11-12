@@ -19,9 +19,9 @@ window.addEventListener('load', function() {
             const dataValues = datosGraficoJSON.map(item => parseFloat(item.promedio));
             
             const backgroundColors = dataValues.map(value => {
-                if (value >= 8) return '#36A2EB';
-                if (value >= 6) return '#FFCE56';
-                return '#FF6384';
+                if (value >= 7) return '#4CAF50';
+                if (value >= 4) return '#FFC107';
+                return '#F44336';
             });
             
             try {
